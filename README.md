@@ -1,2 +1,3 @@
-cat requirements.txt  # Linux/Mac
-type requirements.txt  # Windows
+git add requirements.txt
+git commit -m "Adicionando Gunicorn ao requirements.txt"
+git push origin main
