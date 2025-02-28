@@ -8,10 +8,19 @@
 </head>
 <body class="bg-light">
 
-    <div class="container mt-5">
-        <div class="card shadow p-4">
-            <h2 class="text-center text-primary mb-4">📜 Sistema de Protocolo</h2>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary">📜 Sistema de Protocolo</h2>
 
+            <!-- Exibir botão de login/logout -->
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}" class="btn btn-danger">🚪 Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">🔑 Login</a>
+            {% endif %}
+        </div>
+
+        <div class="card shadow p-4">
             <!-- Exibir mensagens Flash -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -21,7 +30,8 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- Formulário -->
+            <!-- Formulário para adicionar protocolo -->
+            {% if current_user.is_authenticated %}
             <form action="{{ url_for('add') }}" method="post" class="mb-4">
                 <div class="row g-3">
                     <div class="col-md-5">
@@ -31,12 +41,18 @@
                         <input type="text" name="assunto" class="form-control" placeholder="Assunto" required>
                     </div>
                     <div class="col-md-2 d-grid">
-                        <button type="submit" class="btn btn-success">Adicionar</button>
+                        <button type="submit" class="btn btn-success">➕ Adicionar</button>
                     </div>
                 </div>
             </form>
+            {% else %}
+                <div class="alert alert-warning text-center">
+                    ⚠ Você precisa estar <a href="{{ url_for('login') }}">logado</a> para adicionar protocolos.
+                </div>
+            {% endif %}
 
             <!-- Tabela de Protocolos -->
+            {% if current_user.is_authenticated %}
             <table class="table table-bordered table-striped text-center">
                 <thead class="table-dark">
                     <tr>
@@ -53,7 +69,7 @@
                         <td>{{ protocolo.id }}</td>
                         <td>{{ protocolo.nome }}</td>
                         <td>{{ protocolo.assunto }}</td>
-                        <td>{{ protocolo.data_hora }}</td>
+                        <td>{{ protocolo.data_hora.strftime('%d/%m/%Y %H:%M') }}</td>
                         <td>
                             <a href="{{ url_for('delete', id=protocolo.id) }}" class="btn btn-danger btn-sm">🗑 Excluir</a>
                             <a href="{{ url_for('print_pdf', id=protocolo.id) }}" class="btn btn-primary btn-sm">📄 Baixar PDF</a>
@@ -62,6 +78,11 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+                <div class="alert alert-info text-center">
+                    🔒 Faça <a href="{{ url_for('login') }}">login</a> para visualizar seus protocolos.
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -69,4 +90,3 @@
 
 </body>
 </html>
-
